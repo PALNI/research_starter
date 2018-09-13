@@ -1,0 +1,682 @@
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet"> 
+
+<style>
+* {
+   font-family: 'Roboto', sans-serif;
+}
+
+.fa-stack {
+   display: none;
+}
+
+#kickstart-box {
+   padding: 6px 16px;
+   font-size: 15px;
+}
+
+.topic-box,
+.facet-box,
+.synonym-box1,
+.synonym-box2,
+.synonym-box3,
+.synonym-box4 {
+   line-height: 38px;
+   font-size: 24px;
+   margin: 0px 10px 12px 0px;
+   padding: 2px 12px;
+   width: 600px;
+}
+
+.next-button {
+   display: inline-block;
+   background-color: #00aacc;
+   color: #fff;
+   padding: 11px 12px;
+   font-size: 24px;
+   cursor: pointer;
+   border: none;
+   margin-bottom: 12px;
+}
+
+.next-button:hover {
+   background-color: #00bfe6;
+}
+
+#refresh-button {
+   background-color: #d9531e;
+   margin-left: 14px;
+}
+
+#refresh-button:hover {
+   background-color: #e36635;
+}
+
+.prev-input {
+   font-size: 22px;
+   padding: 6px 20px;
+   width: 90%;
+   background-color: #f1f1f1;
+   position: relative;
+}
+
+.prev-input span {
+   padding: 0px 24px;
+   margin-top: 18px;
+   margin-bottom: 18px;
+   display: inline-block;
+   font-size: 24px;
+}
+
+.prev-input i {
+   color: #cccccc;
+   font-size: 28px;
+}
+
+.prev-input i:first-child {
+   float: left;
+}
+
+.prev-input i:last-child {
+   float: right;
+   position: absolute;
+   bottom: 6px;
+   right: 20px;
+}
+
+#s2 ul li {
+   margin-top: 6px;
+}
+
+table {
+   width: 98%;
+   font-size: 18px;
+}
+
+td {
+   /* border: 1px solid black; */
+   padding: 12px;
+}
+
+th {
+   width: 180px;
+   padding: 10px;
+   text-align: right;
+   padding-right: 28px;
+}
+
+.tr0 td:last-child {
+   background-color: rgba(73, 23, 109, 0.35);
+}
+
+.tr1 td:nth-child(2) {
+   background-color: rgba(217, 83, 30, 0.5);
+}
+
+.tr2 td:nth-child(2) {
+   background-color: rgba(217, 83, 30, 0.3);
+}
+
+.tr1 td:nth-child(3) {
+   background-color: rgba(0, 141, 168, 0.5);
+}
+
+.tr2 td:nth-child(3) {
+   background-color: rgba(0, 141, 168, 0.3);
+}
+
+.tr1 td:nth-child(4) {
+   background-color: rgba(67, 149, 57, 0.5);
+}
+
+.tr2 td:nth-child(4) {
+   background-color: rgba(67, 149, 57, 0.3);
+}
+
+.tr1 td:nth-child(5) {
+   background-color: rgba(253, 185, 19, 0.5);
+}
+
+.tr2 td:nth-child(5) {
+   background-color: rgba(253, 185, 19, 0.3);
+}
+
+#bool-box {
+   max-width: 600px;
+   padding: 20px 24px 10px 24px;
+   background-color: #e6e6e6;
+}
+
+#bool-box div,
+#bool-box p {
+   font-size: 18px;
+   margin-bottom: 10px;
+}
+
+#bool-box div {
+   padding: 8px;
+}
+
+.bool0 {
+   background-color: rgba(217, 83, 30, 0.4);
+}
+
+.bool1 {
+   background-color: rgba(0, 141, 168, 0.4);
+}
+
+.bool2 {
+   background-color: rgba(67, 149, 57, 0.4);
+}
+
+.bool3 {
+   background-color: rgba(253, 185, 19, 0.4);
+}
+
+label {
+   font-weight: 400;
+}
+
+.db-radio {
+   margin-left: 20px !important;
+}
+</style>
+
+<script>
+$(document).ready(function(){
+
+// Define variables
+var topic = "";
+var facets = [];
+var syn1 = [];
+var syn2 = [];
+var syn3 = [];
+var syn4 = [];
+var searchString = "(";
+
+$("#search-2").hide();
+$("#search-3").hide();
+$("#search-4").hide();
+$("#search-5").hide();
+$("#search-6").hide();
+$("#search-7").hide();
+$("#search-8").hide();
+
+$(document).on("submit", "#form-1", function(){
+   $("#search-1").hide();
+   $("#search-2").show();
+   topic = $(".topic-box").val();
+   $("#s1").html( topic );
+
+   return false;
+});
+
+$(document).on("submit", "#form-2", function(){
+   $("#search-2").hide();
+   $("#search-3").show();
+
+   $(".facet-box").each(function(){
+      if( $(this).val() != "" ){
+         facets.push( $(this).val() ); 
+      }
+   });   
+
+   for(var i = 0; i < facets.length; i++){
+      $("#s2 ul").append("<li>" + facets[i] + "</li>");
+   }
+
+   $("#facet-1").html("<strong>" + facets[0] + "</strong>");
+
+   return false;
+});
+
+$(document).on("submit", "#form-3", function(){
+   $("#search-3").hide();
+
+   $(".synonym-box1").each(function(){
+      if( $(this).val() != "" ){
+         syn1.push( $(this).val() ); 
+      }
+   });
+
+   if(facets.length <= 1){
+      $("#search-7").show();
+      generateTable();
+   }
+
+   else {
+      $("#search-4").show();
+   }
+
+   $("#facet-2").html("<strong>" + facets[1] + "</strong>");
+
+   return false;
+});
+
+$(document).on("submit", "#form-4", function(){
+   $("#search-4").hide();
+
+   $(".synonym-box2").each(function(){
+      if( $(this).val() != "" ){
+         syn2.push( $(this).val() ); 
+      }
+   });
+
+   if(facets.length <= 2){
+      $("#search-7").show();
+      generateTable();
+   }
+
+   else {
+      $("#search-5").show();
+   }
+
+   $("#facet-3").html("<strong>" + facets[2] + "</strong>");
+
+   return false;
+});
+
+$(document).on("submit", "#form-5", function(){
+   $("#search-5").hide();
+
+   $(".synonym-box3").each(function(){
+      if( $(this).val() != "" ){
+         syn3.push( $(this).val() ); 
+      }
+   });
+
+   if(facets.length <= 3){
+      $("#search-7").show();
+      generateTable();
+   }
+
+   else {
+      $("#search-6").show();
+   }
+
+   $("#facet-4").html("<strong>" + facets[3] + "</strong>");
+
+   return false;
+});
+
+$(document).on("submit", "#form-6", function(){
+   $("#search-6").hide();
+   $("#search-7").show();
+
+   $(".synonym-box4").each(function(){
+      if( $(this).val() != "" ){
+         syn4.push( $(this).val() ); 
+      }
+   });
+
+   generateTable();
+
+   return false;
+});
+
+function generateTable(){
+   // Generate table from previously entered values, starting with topic, then facets
+   $("#table-list").append("<tr class='tr0'><th>Topic</th><td colspan='1'>" + topic + "</td></tr>");
+   $(".tr0 td").attr("colspan", facets.length);
+
+   $("#table-list").append("<tr class='tr1'><th>Key Concepts</th>");
+   for(var i = 0; i < facets.length; i++){
+      $("#table-list .tr1").append("<td>" + facets[i] + "</td>");
+   }
+   $("#table-list").append("</tr>");
+
+   // Fill in entered keywords for each facet
+   $("#table-list").append("<tr class='tr2'><th>Related Keywords</th><td class='td1'>");
+   for(var i = 0; i < syn1.length; i++){
+      $("#table-list .td1").append(syn1[i] + "<br>");
+   }
+   $("#table-list .tr2").append("</td>");
+
+   // Fill in entered key words for the second facet if it was entered
+   if(facets.length > 1){
+      $("#table-list .tr2").append("<td class='td2'>");
+      for(var i = 0; i < syn2.length; i++){
+         $("#table-list .td2").append(syn2[i] + "<br>");
+      }
+      $("#table-list .tr2").append("</td>");
+   }
+
+   // ...and the same for the third facet
+   if(facets.length > 2){
+      $("#table-list .tr2").append("<td class='td3'>");
+      for(var i = 0; i < syn3.length; i++){
+         $("#table-list .td3").append(syn3[i] + "<br>");
+      }
+      $("#table-list .tr2").append("</td>");
+   }
+
+   // ...and finally the fourth facet
+   if(facets.length > 3){
+      $("#table-list .tr2").append("<td class='td4'>");
+      for(var i = 0; i < syn4.length; i++){
+         $("#table-list .td4").append(syn4[i] + "<br>");
+      }
+      $("#table-list .tr2").append("</td>");
+   }
+
+   $("#table-list").append("</tr>");
+
+
+   // Generate search string
+   for(var i = 0; i < facets.length; i++){
+      if(i == 0){
+         searchString += facets[0] + " OR ";
+         for(var a = 0; a < syn1.length; a++){
+            if(a == (syn1.length - 1)){
+               searchString += (syn1[a] + ")");
+            }
+            else {
+               searchString += (syn1[a] + " OR ");
+            }
+         }
+      }
+      if(i == 1){
+         searchString += " AND (";
+         searchString += (facets[i] + " OR ");
+         for(var a = 0; a < syn2.length; a++){
+            if(a == (syn2.length - 1)){
+               searchString += (syn2[a] + ")");
+            }
+            else {
+               searchString += (syn2[a] + " OR ");
+            }
+         }
+      }
+      if(i == 2){
+         searchString += " AND (";
+         searchString += (facets[i] + " OR ");
+         for(var a = 0; a < syn3.length; a++){
+            if(a == (syn3.length - 1)){
+               searchString += (syn3[a] + ")");
+            }
+            else {
+               searchString += (syn3[a] + " OR ");
+            }
+         }
+      }
+      if(i == 3){
+         searchString += " AND (";
+         searchString += (facets[i] + " OR ");
+         for(var a = 0; a < syn4.length; a++){
+            if(a == (syn4.length - 1)){
+               searchString += (syn4[a] + ") ");
+            }
+            else {
+               searchString += (syn4[a] + " OR ");
+            }
+         }
+      }
+   }
+
+   // Generate the bool-box combination thing
+   for(var i = 0; i < facets.length; i++){
+      if(i > 0){
+         $("#bool-box").append("<p>AND</p>");
+      }
+
+      $("#bool-box").append("<div class='bool" + i + "'>" + facets[i] + "</div>");
+
+      if(i == 0){
+         for(var a = 0; a < syn1.length; a++){
+            $(".bool0").append(" OR " + syn1[a]);
+         }
+      }
+      if(i == 1){
+         for(var a = 0; a < syn2.length; a++){
+            $(".bool1").append(" OR " + syn2[a]);
+         }
+      }
+      if(i == 2){
+         for(var a = 0; a < syn3.length; a++){
+            $(".bool2").append(" OR " + syn3[a]);
+         }
+      }
+      if(i == 3){
+         for(var a = 0; a < syn4.length; a++){
+            $(".bool3").append(" OR " + syn4[a]);
+         }
+      }
+   }
+
+   $("#search-statement").html(searchString);
+}
+
+$("#search-submit").click(function(){
+   var tempSearch = searchString;
+   var selectedDB = $("input[name='dbs']:checked").val();
+
+   // Find out which database has been selected, then build url according to its rules
+   switch(selectedDB) {
+      case "asp":
+         tempSearch.replace(" ", "+");
+         var url = "https://ezproxy.goshen.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&authtype=ip,uid&bQuery=" + tempSearch + "&db=aph";
+         break;
+
+      case "cinahl":
+         tempSearch.replace(" ", "+");
+         var url = "https://ezproxy.goshen.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&authtype=ip,uid&bQuery=" + tempSearch + "&db=c8h";
+         break;
+
+      case "psycinfo":
+         tempSearch.replace(" ", "+");
+         var url = "https://ezproxy.goshen.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&authtype=ip,uid&bQuery=" + tempSearch + "&db=psyh";
+         break;
+
+      case "socindex":
+         tempSearch.replace(" ", "+");
+         var url = "https://ezproxy.goshen.edu/login?url=http://search.ebscohost.com/login.aspx?direct=true&authtype=ip,uid&bQuery=" + tempSearch + "&db=sih";
+         break;
+
+      case "jstor":
+         tempSearch.replace(" ", "+");
+         var url = "https://ezproxy.goshen.edu/login?url=http://www.jstor.org/action/doBasicSearch?Query=" + tempSearch + "&acc=on&wc=on&fc=off&group=none";
+         break;
+
+      case "credo":
+         tempSearch.replace(" ", "%20");
+         var url = "https://ezproxy.goshen.edu/login?url=http://search.credoreference.com/search/all?searchPhrase=" + tempSearch;
+         break;
+   }
+
+   // Redirect page to new url
+   window.open(url, "_blank");
+});
+
+$("#select-database").click(function(){
+   $("#search-7").hide();
+   $("#search-8").show();
+});
+
+});
+</script>
+
+<div id="kickstart-box">
+<div id="search-1">
+   <p><strong>Enter your research topic in the box below.</strong> Try to limit your topic to one sentence or phrase that best represents your research. For example:</p>
+   <ul>
+      <li>Does drinking diet soda increase your risk of diabetes?</li>
+      <li>Ergonomic workstation trends in higher education</li>
+      <li>Impact of sugar on E. coli longevity</li>
+   </ul>
+   <br>
+   <form id="form-1" onSubmit="return false;">
+   <input type="text" class="topic-box" name="topic" placeholder="Enter research topic...">
+   <input type="submit" class="next-button" id="butt-1" value="Next" action="#">
+   </form>
+</div>
+
+<div id="search-2">
+   <p>Now, <strong>identify 2-4 key concepts within your research topic.</strong> Each concept might be one or two words.</p>
+   <p>For example, let's say your research topic is "Does drinking diet soda increase your risk of diabetes?" Your key concepts might be:</p>
+   <ul>
+      <li>diet soda</li>
+      <li>diabetes</li>
+      <li>risk factors</li>
+   </ul>
+   <br>
+   <p>Your research topic is:</p>
+   <div class="prev-input"><i class="fas fa-quote-left"></i><span id="s1"></span><i class="fas fa-quote-right"></i></div>
+   <br>
+   <form id="form-2" onSubmit="return false;">
+   <input type="text" class="facet-box" name="facet" placeholder="Enter key concept...">
+   <input type="text" class="facet-box" name="facet" placeholder="Enter key concept...">
+   <input type="text" class="facet-box" name="facet" placeholder="Enter key concept...">
+   <input type="text" class="facet-box" name="facet" placeholder="Enter key concept...">
+   <br>
+   <input type="submit" class="next-button" id="butt-2" value="Next" action="#">
+   </form>
+</div>
+
+<div id="search-3">
+   <p>Your key concepts are:</p>
+   <div class="prev-input"><i class="fas fa-quote-left"></i><span id="s2"><ul></ul></span><i class="fas fa-quote-right"></i></div>
+   <br>
+   <p>Now, <strong>try to list at least 3 related keywords for each of your key concepts.</strong> These might be broader terms, more specific terms, synonyms, etc.</p>
+   <p>For example, let's say you are thinking up related keywords for the concept "diet soda". You might use:</p>
+   <ul>
+      <li>"diet coke" as a more specific term referring to a specific brand of soda</li>
+      <li>"pop" as a broader term encompassing more than just diet soda</li>
+      <li>"carbonated beverage" as a synonym for soda</li>
+   </ul>
+   <br>
+   <p>Let's start with your first term, <span id="facet-1"></span>.</p>
+   <br>
+   <form id="form-3" onSubmit="return false;">
+   <input type="text" class="synonym-box1" name="synonym1" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box1" name="synonym1" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box1" name="synonym1" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box1" name="synonym1" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box1" name="synonym1" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box1" name="synonym1" placeholder="Enter keyword...">
+   <br>
+   <input type="submit" class="next-button" id="butt-3" value="Next" action="#">
+   </form>
+</div>
+
+<div id="search-4">
+   <p>Your key concepts are:</p>
+   <div class="prev-input"><i class="fas fa-quote-left"></i><span id="s2"><ul></ul></span><i class="fas fa-quote-right"></i></div>
+   <br>
+   <p>Now, <strong>try to list at least 3 related keywords for each of your key concepts.</strong> These might be broader terms, more specific terms, synonyms, etc.</p>
+   <p>For example, let's say you are thinking up related keywords for the concept "diet soda". You might use:</p>
+   <ul>
+      <li>"diet coke" as a more specific term referring to a specific brand of soda</li>
+      <li>"pop" as a broader term encompassing more than just diet soda</li>
+      <li>"carbonated beverage" as a synonym for soda</li>
+   </ul>
+   <br>
+   <p>And now for your second key concept, <span id="facet-2"></span>.</p>
+   <br>
+   <form id="form-4" onSubmit="return false;">
+   <input type="text" class="synonym-box2" name="synonym2" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box2" name="synonym2" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box2" name="synonym2" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box2" name="synonym2" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box2" name="synonym2" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box2" name="synonym2" placeholder="Enter keyword...">
+   <br>
+   <input type="submit" class="next-button" id="butt-4" value="Next" action="#">
+   </form>
+</div>
+
+<div id="search-5">
+   <p>Your key concepts are:</p>
+   <div class="prev-input"><i class="fas fa-quote-left"></i><span id="s2"><ul></ul></span><i class="fas fa-quote-right"></i></div>
+   <br>
+   <p>Now, <strong>try to list at least 3 related keywords for each of your key concepts.</strong> These might be broader terms, more specific terms, synonyms, etc.</p>
+   <p>For example, let's say you are thinking up related keywords for the concept "diet soda". You might use:</p>
+   <ul>
+      <li>"diet coke" as a more specific term referring to a specific brand of soda</li>
+      <li>"pop" as a broader term encompassing more than just diet soda</li>
+      <li>"carbonated beverage" as a synonym for soda</li>
+   </ul>
+   <br>
+   <p>And now for your third key concept, <span id="facet-3"></span>.</p>
+   <br>
+   <form id="form-5" onSubmit="return false;">
+   <input type="text" class="synonym-box3" name="synonym3" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box3" name="synonym3" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box3" name="synonym3" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box3" name="synonym3" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box3" name="synonym3" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box3" name="synonym3" placeholder="Enter keyword...">
+   <br>
+   <input type="submit" class="next-button" id="butt-5" value="Next" action="#">
+   </form>
+</div>
+
+<div id="search-6">
+   <p>Your key concepts are:</p>
+   <div class="prev-input"><i class="fas fa-quote-left"></i><span id="s2"><ul></ul></span><i class="fas fa-quote-right"></i></div>
+   <br>
+   <p>Now, <strong>try to list at least 3 related keywords for each of your key concepts.</strong> These might be broader terms, more specific terms, synonyms, etc.</p>
+   <p>For example, let's say you are thinking up related keywords for the concept "diet soda". You might use:</p>
+   <ul>
+      <li>"diet coke" as a more specific term referring to a specific brand of soda</li>
+      <li>"pop" as a broader term encompassing more than just diet soda</li>
+      <li>"carbonated beverage" as a synonym for soda</li>
+   </ul>
+   <br>
+   <p>And now for your fourth key concept, <span id="facet-4"></span>.</p>
+   <br>
+   <form id="form-6" onSubmit="return false;">
+   <input type="text" class="synonym-box4" name="synonym4" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box4" name="synonym4" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box4" name="synonym4" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box4" name="synonym4" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box4" name="synonym4" placeholder="Enter keyword...">
+   <input type="text" class="synonym-box4" name="synonym4" placeholder="Enter keyword...">
+   <br>
+   <input type="submit" class="next-button" id="butt-6" value="Next" action="#">
+   </form>
+</div>
+
+<div id="search-7">
+   <p>Here's the list of keywords you have generated:</p>
+   <table>
+      <tbody id="table-list">
+      </tbody>
+   </table>
+   <br><br>
+   <p>Now that you've come up with your keywords, you need to combine them using Boolean operators (AND and OR). For the terms you came up with, that would look like this:</p>
+   <br>
+   <div id="bool-box"></div>
+   <br><br>
+   <p>Here's what that looks like in a format a database can understand.</p>
+   <textarea id="search-statement" rows="5" cols="60" readonly></textarea>
+   <br><br>
+   <p><strong>Next it's time to select which database to search within!</strong></p>
+   <p>Select one database from the list below, then click "Search!" to perform your search.</p>  
+   <br>
+   <input type="radio" name="dbs" class="db-radio" id="radio-1" value="asp" checked />
+   <label for="radio-1">Academic Search Premier</label><br>
+
+   <input type="radio" name="dbs" class="db-radio" id="radio-2" value="cinahl" />
+   <label for="radio-2">CINAHL</label><br>
+
+   <input type="radio" name="dbs" class="db-radio" id="radio-6" value="credo" />
+   <label for="radio-6">CREDO Reference</label><br>
+
+   <input type="radio" name="dbs" class="db-radio" id="radio-3" value="jstor" />
+   <label for="radio-3">JSTOR</label><br>
+
+   <input type="radio" name="dbs" class="db-radio" id="radio-4" value="psycinfo" />
+   <label for="radio-4">PsycINFO</label><br>
+
+   <input type="radio" name="dbs" class="db-radio" id="radio-5" value="socindex" />
+   <label for="radio-5">SocINDEX</label>
+   <br><br>
+
+   <div class="next-button" id="search-submit">Search!</div>
+   <a href="https://libraryguides.goshen.edu/kickstart" target="_self"><div class="next-button" id="refresh-button">Start Over</div>
+</div>
+
+<div id="search-8">
+
+</div>
+
+</div>
